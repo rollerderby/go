@@ -1,5 +1,7 @@
 package main
 
+//go:generate $GOPATH/bin/esc -prefix html -o html.go ../../html
+
 import (
 	"flag"
 	"os/exec"
@@ -62,12 +64,24 @@ func openBrowser(url string) bool {
 	return cmd.Start() == nil
 }
 
+func setVersion() {
+	state.Root.Lock()
+	defer state.Root.Unlock()
+
+	versionStr := state.NewString().(*state.String)
+	versionStr.SetValue(version)
+
+	state.Root.Add("Version", "", versionStr)
+}
+
 func main() {
 	log.Info("Initializing")
 
 	addTeams := flag.Bool("addTeams", false, "Add Dummy Teams")
 	addPerson := flag.Bool("addPerson", false, "Add Dummy Person")
 	flag.Parse()
+
+	setVersion()
 
 	ruleset.Initialize()
 	entity.Initialize()
@@ -106,18 +120,6 @@ func main() {
 		if !found {
 			addDummyPerson()
 		}
-	}
-
-	for _, obj := range entity.Leagues.Values() {
-		log.Infof("%v: %v", obj.Path(), obj.JSON(false))
-	}
-
-	for _, obj := range entity.Teams.Values() {
-		log.Infof("%v: %v", obj.Path(), obj.JSON(false))
-	}
-
-	for _, obj := range entity.People.Values() {
-		log.Infof("%v: %v", obj.Path(), obj.JSON(false))
 	}
 
 	go state.Root.SaveLoop()
