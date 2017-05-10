@@ -356,9 +356,12 @@ func helperArray(w io.Writer, helperName string, tDef *typeDef, typeDefs []*type
 
 	if !isSimpleType(tDef.childType) {
 		childStateType := "state.Value"
+		var childDef *typeDef
 		for _, c := range typeDefs {
 			if c.name == tDef.childType {
 				childStateType = "*state." + c.stateType
+				childDef = c
+				break
 			}
 		}
 
@@ -376,6 +379,22 @@ func helperArray(w io.Writer, helperName string, tDef *typeDef, typeDefs []*type
 		fmt.Fprintf(w, "	}\n")
 		fmt.Fprintf(w, "	return ret\n")
 		fmt.Fprintf(w, "}\n\n")
+		if childDef != nil && childDef.stateType == "Object" {
+			for _, field := range childDef.fields {
+				goType := goType(field.stateType)
+				if goType != "" {
+					fmt.Fprintf(w, "func (h *%vHelper) FindBy%v(lookFor %v) []*%vHelper {\n", helperName, field.name, goType, tDef.childType)
+					fmt.Fprintf(w, "	var ret []*%vHelper\n", tDef.childType)
+					fmt.Fprintf(w, "	for _, obj := range h.Values() {\n")
+					fmt.Fprintf(w, "		if obj.%v() == lookFor {\n", field.name)
+					fmt.Fprintf(w, "			ret = append(ret, obj)\n")
+					fmt.Fprintf(w, "		}\n")
+					fmt.Fprintf(w, "	}\n")
+					fmt.Fprintf(w, "	return ret\n")
+					fmt.Fprintf(w, "}\n\n")
+				}
+			}
+		}
 	} else {
 		goType := goType(tDef.childType)
 
@@ -401,9 +420,12 @@ func helperArray(w io.Writer, helperName string, tDef *typeDef, typeDefs []*type
 
 func helperHash(w io.Writer, helperName string, tDef *typeDef, typeDefs []*typeDef) {
 	childStateType := "state.Value"
+	var childDef *typeDef
 	for _, c := range typeDefs {
 		if c.name == tDef.childType {
 			childStateType = "*state." + c.stateType
+			childDef = c
+			break
 		}
 	}
 	fmt.Fprintf(w, "func (h *%vHelper) New(key string) (*%vHelper, error) {", helperName, tDef.childType)
@@ -422,7 +444,35 @@ func helperHash(w io.Writer, helperName string, tDef *typeDef, typeDefs []*typeD
 	fmt.Fprintf(w, "}\n\n")
 	fmt.Fprintf(w, "func (h *%vHelper) Keys() []string {", helperName)
 	fmt.Fprintf(w, "	return h.state.Keys()\n")
-	fmt.Fprintf(w, "}\n")
+	fmt.Fprintf(w, "}\n\n")
+
+	if childDef != nil && childDef.stateType == "Object" {
+		for idx, field := range childDef.fields {
+			goType := goType(field.stateType)
+			if goType != "" {
+				if idx == 0 && field.name == "ID" && field.stateType == "GUID" {
+					fmt.Fprintf(w, "func (h *%vHelper) Get(id %v) *%vHelper {\n", helperName, goType, tDef.childType)
+					fmt.Fprintf(w, "	for _, obj := range h.Values() {\n")
+					fmt.Fprintf(w, "		if obj.%v() == id {\n", field.name)
+					fmt.Fprintf(w, "			return obj\n")
+					fmt.Fprintf(w, "		}\n")
+					fmt.Fprintf(w, "	}\n")
+					fmt.Fprintf(w, "	return nil\n")
+					fmt.Fprintf(w, "}\n\n")
+				} else {
+					fmt.Fprintf(w, "func (h *%vHelper) FindBy%v(lookFor %v) []*%vHelper {\n", helperName, field.name, goType, tDef.childType)
+					fmt.Fprintf(w, "	var ret []*%vHelper\n", tDef.childType)
+					fmt.Fprintf(w, "	for _, obj := range h.Values() {\n")
+					fmt.Fprintf(w, "		if obj.%v() == lookFor {\n", field.name)
+					fmt.Fprintf(w, "			ret = append(ret, obj)\n")
+					fmt.Fprintf(w, "		}\n")
+					fmt.Fprintf(w, "	}\n")
+					fmt.Fprintf(w, "	return ret\n")
+					fmt.Fprintf(w, "}\n\n")
+				}
+			}
+		}
+	}
 }
 
 func helperObject(w io.Writer, helperName string, tDef *typeDef, typeDefs []*typeDef) {
