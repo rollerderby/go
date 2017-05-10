@@ -195,6 +195,8 @@ func buildState(packageName, goFile string, typeDefs []*typeDef) error {
 			return "state.NewDate"
 		case "Enum":
 			return fmt.Sprintf("state.NewEnumOf(%#v...)", tDef.enumValues)
+		case "GUID":
+			return "state.NewGUID"
 		case "Number":
 			return "state.NewNumber"
 		case "String":
