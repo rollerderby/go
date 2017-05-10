@@ -53,8 +53,9 @@ func AddGlobalUsers() error {
 
 		users := Users.FindByPersonID(person.ID())
 		if len(users) == 0 {
-			_, err := Users.AddUser(u.username, u.password, u.isSuper, u.groups, person.ID())
-			return err
+			if _, err := Users.AddUser(u.username, u.password, u.isSuper, u.groups, person.ID()); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
