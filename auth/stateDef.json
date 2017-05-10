@@ -1,0 +1,39 @@
+[{
+		"Name": "Users",
+		"StateType": "Hash",
+		"ChildType": "User",
+		"Root": "User",
+		"SavePath": "user"
+	},
+	{
+		"Name": "User",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "Username",
+				"StateType": "String"
+			},
+			{
+				"Name": "PasswordHash",
+				"StateType": "String"
+			},
+			{
+				"Name": "PasswordHashType",
+				"StateType": "Enum",
+				"EnumValues": ["sha512", "sha256", "md5"]
+			},
+			{
+				"Name": "IsSuper",
+				"StateType": "Bool"
+			},
+			{
+				"Name": "Groups",
+				"StateType": "Array",
+				"ChildType": "String"
+			},
+			{
+				"Name": "PersonID",
+				"StateType": "GUID"
+			}
+		]
+	}
+]
