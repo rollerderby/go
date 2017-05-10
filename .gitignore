@@ -1,0 +1,6 @@
+config/
+logs/
+bin/
+release/
+state.go
+state_helpers.go
