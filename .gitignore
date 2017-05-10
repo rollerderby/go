@@ -2,5 +2,8 @@ config/
 logs/
 bin/
 release/
+version.go
 state.go
 state_helpers.go
+cmd/server/html.go
+*.swp

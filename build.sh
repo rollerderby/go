@@ -2,10 +2,6 @@ build() {
 	echo "Building for $1-$2 to $3"
 	GOOS=$1 GOARCH=$2 go install -v std
 
-	BASE=github.com/rollerderby/go
-	SERVER=$BASE/cmd/server
-	rm -rf `go env GOPATH`/pkg
-	go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | GOOS=$1 GOARCH=$2 xargs -n 1 go get -u
 	go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | GOOS=$1 GOARCH=$2 xargs -n 1 go install
 
 	GOOS=$1 GOARCH=$2 go build -v -o $3 $SERVER
@@ -14,6 +10,8 @@ build() {
 
 ZIP=0
 RELEASE=0
+BASE=github.com/rollerderby/go
+SERVER=$BASE/cmd/server
 
 if [ "z$1" = "z-zip" ]; then ZIP=1; fi
 if [ "z$1" = "z-release" ]; then RELEASE=1; ZIP=1; fi
@@ -24,14 +22,18 @@ if [ $RELEASE -eq 0 ]; then VERSION=$VERSION-`date +%Y%m%d%H%M%S`; fi
 echo Building Version $VERSION
 echo
 
-cat > server/version.go <<END
-package server
+cat > cmd/server/version.go <<END
+package main
 const version = "$VERSION"
 END
 
-go install github.com/rollerderby/go/cmd/buildStates
-go generate github.com/rollerderby/go/entity
-go generate github.com/rollerderby/go/ruleset
+go get -u github.com/mjibson/esc
+rm -rf `go env GOPATH`/pkg
+go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | xargs -n 1 go get -u
+go install $BASE/cmd/buildStates
+go generate $BASE/cmd/server
+go generate $BASE/entity
+go generate $BASE/ruleset
 
 if [ $ZIP -eq 0 ]; then
 	mkdir -p bin
