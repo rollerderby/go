@@ -13,6 +13,8 @@ RELEASE=0
 BASE=github.com/rollerderby/go
 SERVER=$BASE/cmd/server
 
+cd `go env GOPATH`/src/$BASE
+
 if [ "z$1" = "z-zip" ]; then ZIP=1; fi
 if [ "z$1" = "z-release" ]; then RELEASE=1; ZIP=1; fi
 
