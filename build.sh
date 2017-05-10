@@ -1,10 +1,10 @@
 build() {
 	echo "Building for $1-$2 to $3"
-	GOOS=$1 GOARCH=$2 go install -v std
+	GOOS=$1 GOARCH=$2 go install -v std || exit 1
 
-	go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | GOOS=$1 GOARCH=$2 xargs -n 1 go install
+	(go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | GOOS=$1 GOARCH=$2 xargs -n 1 go install) || exit 1
 
-	GOOS=$1 GOARCH=$2 go build -v -o $3 $SERVER
+	GOOS=$1 GOARCH=$2 go build -v -o $3 $SERVER || exit 1
 	echo
 }
 
@@ -24,16 +24,16 @@ echo
 
 cat > cmd/server/version.go <<END
 package main
+
 const version = "$VERSION"
 END
 
-go get -u github.com/mjibson/esc
+go get -u github.com/mjibson/esc || exit 1
 rm -rf `go env GOPATH`/pkg
-go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | xargs -n 1 go get -u
-go install $BASE/cmd/buildStates
-go generate $BASE/cmd/server
-go generate $BASE/entity
-go generate $BASE/ruleset
+(go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | xargs -n 1 go get -u) || exit 1
+go install $BASE/cmd/buildStates || exit 1
+go generate $BASE/cmd/server || exit 1
+(go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep $BASE | xargs -n 1 go generate) || exit 1
 
 if [ $ZIP -eq 0 ]; then
 	mkdir -p bin

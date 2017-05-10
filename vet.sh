@@ -6,6 +6,5 @@ BASE=github.com/rollerderby/go
 PACKAGE=$BASE/cmd/server
 
 cd `go env GOPATH`/src
-pwd
 $VET $PACKAGE
 go list -f '{{.Deps}}' $PACKAGE | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep $BASE | xargs -n 1 $VET
