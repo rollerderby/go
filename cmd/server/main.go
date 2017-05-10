@@ -133,7 +133,7 @@ func main() {
 	}
 	go state.Root.SaveLoop()
 
-	openBrowser("http://localhost:8000")
+	openBrowser(fmt.Sprintf("http://localhost:%v", uint16(*port)))
 
 	signal.Notify(signals, os.Interrupt, os.Kill)
 	s := <-signals
