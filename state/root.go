@@ -140,6 +140,9 @@ func (r *root) LoadSavedConfigs() error {
 	}
 
 	for valueName, value := range r.values {
+		if value.backingFile == "" {
+			continue
+		}
 		if hash, ok := value.value.(*Hash); ok {
 			dir := path.Join(r.basePath, "config", value.backingFile)
 
@@ -214,6 +217,9 @@ func (r *root) SaveLoop() {
 		r.Lock()
 		defer r.Unlock()
 		for _, value := range r.values {
+			if value.backingFile == "" {
+				continue
+			}
 			if hash, ok := value.value.(*Hash); ok {
 				for _, key := range hash.Keys() {
 					stateValue := hash.Get(key)
