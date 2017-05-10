@@ -20,6 +20,7 @@ const (
 	NOTICE               // normal, but significant, condition
 	INFO                 // informational message
 	DEBUG                // debug-level message
+	NONE                 // Inherit default level
 )
 
 var paddedLevels = map[Level]string{
@@ -32,6 +33,7 @@ var paddedLevels = map[Level]string{
 	INFO:    " INFO    ",
 	DEBUG:   " DEBUG   ",
 }
+var defaultLevel = INFO
 
 func (l Level) String() string {
 	switch l {
@@ -194,8 +196,19 @@ func Close() {
 }
 
 func New(name string) *Logger {
-	l := &Logger{name: name, level: INFO}
+	l := &Logger{name: name, level: NONE}
 	RootLoggers = append(RootLoggers, l)
+	return l
+}
+
+func SetLevel(level Level) {
+	defaultLevel = level
+}
+
+func inheritDefault(l Level) Level {
+	if l == NONE {
+		return defaultLevel
+	}
 	return l
 }
 
@@ -241,14 +254,15 @@ func (l *Logger) Name() string {
 }
 
 func (l *Logger) Level() Level {
-	level := l.level
+	level := inheritDefault(l.level)
 	for {
 		if l.parent == nil {
 			break
 		}
 		l = l.parent
-		if l.level > level {
-			level = l.level
+		thisLevel := inheritDefault(l.level)
+		if thisLevel > level {
+			level = thisLevel
 		}
 	}
 
