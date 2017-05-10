@@ -15,6 +15,8 @@ type Array struct {
 	revision    uint64
 	skipSave    bool
 	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewArrayOf(initializer func() Value) func() Value {
@@ -61,6 +63,19 @@ func (obj *Array) Values() []Value {
 	return ret
 }
 
+func (obj *Array) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Array) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Array) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Array) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Array) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Array) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Array) SkipSave() bool         { return obj.skipSave }

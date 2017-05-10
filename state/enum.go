@@ -8,13 +8,15 @@ import (
 )
 
 type Enum struct {
-	values     []string
-	value      string
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	values      []string
+	value       string
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewEnumOf(values ...string) func() Value {
@@ -50,6 +52,19 @@ func (obj *Enum) SetValue(val string) error {
 	}
 }
 
+func (obj *Enum) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Enum) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Enum) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Enum) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Enum) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Enum) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Enum) SkipSave() bool         { return obj.skipSave }

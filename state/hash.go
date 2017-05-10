@@ -16,6 +16,8 @@ type Hash struct {
 	revision    uint64
 	skipSave    bool
 	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewHashOf(initializer func() Value) func() Value {
@@ -128,6 +130,19 @@ func (obj *Hash) Get(key string) Value {
 	return obj.values[key]
 }
 
+func (obj *Hash) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Hash) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Hash) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Hash) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Hash) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Hash) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Hash) SkipSave() bool         { return obj.skipSave }

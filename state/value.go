@@ -20,4 +20,32 @@ type Value interface {
 	SetSaveNeeded(val bool)
 
 	String() string
+
+	WriteGroups() []string
+	AddWriteGroup(group ...string)
+	ReadGroups() []string
+	AddReadGroup(group ...string)
+}
+
+func mergeGroups(a, b []string) []string {
+	var ret []string
+
+	merge := func(in []string) {
+		for _, c := range in {
+			found := false
+			for _, d := range ret {
+				if d == c {
+					found = true
+					break
+				}
+			}
+			if !found {
+				ret = append(ret, c)
+			}
+		}
+	}
+	merge(a)
+	merge(b)
+
+	return ret
 }

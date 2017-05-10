@@ -9,12 +9,14 @@ import (
 )
 
 type Bool struct {
-	value      bool
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	value       bool
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewBool() Value { return &Bool{} }
@@ -32,6 +34,19 @@ func (obj *Bool) SetValue(val bool) error {
 	return nil
 }
 
+func (obj *Bool) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Bool) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Bool) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Bool) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Bool) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Bool) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Bool) SkipSave() bool         { return obj.skipSave }

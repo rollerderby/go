@@ -7,12 +7,14 @@ import (
 )
 
 type String struct {
-	value      string
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	value       string
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewString() Value { return &String{} }
@@ -30,6 +32,19 @@ func (obj *String) SetValue(val string) error {
 	return nil
 }
 
+func (obj *String) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *String) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *String) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *String) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *String) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *String) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *String) SkipSave() bool         { return obj.skipSave }

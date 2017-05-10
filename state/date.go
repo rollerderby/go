@@ -7,12 +7,14 @@ import (
 )
 
 type Date struct {
-	value      string
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	value       string
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewDate() Value { return &Date{} }
@@ -30,6 +32,19 @@ func (obj *Date) SetValue(val string) error {
 	return nil
 }
 
+func (obj *Date) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Date) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Date) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Date) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Date) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Date) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Date) SkipSave() bool         { return obj.skipSave }

@@ -8,12 +8,14 @@ import (
 )
 
 type GUID struct {
-	value      string
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	value       string
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewGUID() Value { return &GUID{} }
@@ -46,6 +48,19 @@ func (obj *GUID) SetValue(val string) error {
 	return nil
 }
 
+func (obj *GUID) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *GUID) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *GUID) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *GUID) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *GUID) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *GUID) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *GUID) SkipSave() bool         { return obj.skipSave }

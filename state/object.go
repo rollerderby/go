@@ -27,6 +27,8 @@ type Object struct {
 	revision        uint64
 	skipSave        bool
 	saveNeeded      bool
+	writeGroups     []string
+	readGroups      []string
 }
 
 func (obj *Object) init() {
@@ -45,6 +47,19 @@ func (obj *Object) Get(key string) Value {
 	return obj.values[key]
 }
 
+func (obj *Object) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Object) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Object) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Object) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Object) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Object) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Object) SkipSave() bool         { return obj.skipSave }

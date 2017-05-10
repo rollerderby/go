@@ -7,12 +7,14 @@ import (
 )
 
 type Number struct {
-	value      int64
-	parent     Value
-	path       string
-	revision   uint64
-	skipSave   bool
-	saveNeeded bool
+	value       int64
+	parent      Value
+	path        string
+	revision    uint64
+	skipSave    bool
+	saveNeeded  bool
+	writeGroups []string
+	readGroups  []string
 }
 
 func NewNumber() Value { return &Number{} }
@@ -30,6 +32,19 @@ func (obj *Number) SetValue(val int64) error {
 	return nil
 }
 
+func (obj *Number) WriteGroups() []string {
+	return obj.writeGroups
+}
+func (obj *Number) AddWriteGroup(group ...string) {
+	obj.writeGroups = mergeGroups(obj.writeGroups, group)
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
+func (obj *Number) ReadGroups() []string {
+	return obj.readGroups
+}
+func (obj *Number) AddReadGroup(group ...string) {
+	obj.readGroups = mergeGroups(obj.readGroups, group)
+}
 func (obj *Number) SaveNeeded() bool       { return obj.saveNeeded }
 func (obj *Number) SetSaveNeeded(val bool) { obj.saveNeeded = val }
 func (obj *Number) SkipSave() bool         { return obj.skipSave }

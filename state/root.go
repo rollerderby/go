@@ -80,12 +80,16 @@ func (r *root) changedValue(value Value) {
 	}
 }
 
-func (r *root) SaveNeeded() bool        { return false }
-func (r *root) SetSaveNeeded(skip bool) {}
-func (r *root) SkipSave() bool          { return false }
-func (r *root) SetSkipSave(skip bool)   {}
-func (r *root) Revision() uint64        { return r.revision }
-func (r *root) SetRevision(rev uint64)  {}
+func (r *root) WriteGroups() []string         { return nil }
+func (r *root) AddWriteGroup(group ...string) {}
+func (r *root) ReadGroups() []string          { return nil }
+func (r *root) AddReadGroup(group ...string)  {}
+func (r *root) SaveNeeded() bool              { return false }
+func (r *root) SetSaveNeeded(skip bool)       {}
+func (r *root) SkipSave() bool                { return false }
+func (r *root) SetSkipSave(skip bool)         {}
+func (r *root) Revision() uint64              { return r.revision }
+func (r *root) SetRevision(rev uint64)        {}
 
 func (r *root) Parent() Value { return nil }
 func (r *root) Path() string  { return "" }
