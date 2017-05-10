@@ -1,0 +1,53 @@
+[{
+		"Name": "Rulesets",
+		"StateType": "Hash",
+		"ChildType": "Ruleset",
+		"Root": "Ruleset",
+		"SavePath": "ruleset"
+	},
+	{
+		"Name": "Ruleset",
+		"StateType": "Object",
+		"InitFunc": true,
+		"Fields": [{
+				"Name": "Name",
+				"StateType": "String"
+			},
+			{
+				"Name": "Locked",
+				"StateType": "Bool"
+			},
+			{
+				"Name": "Rules",
+				"StateType": "Hash",
+				"ChildType": "Rule"
+			}
+		]
+	},
+	{
+		"Name": "Rule",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "Name",
+				"StateType": "String"
+			},
+			{
+				"Name": "Type",
+				"StateType": "String"
+			},
+			{
+				"Name": "DefaultValue",
+				"StateType": "String"
+			},
+			{
+				"Name": "Value",
+				"StateType": "String"
+			},
+			{
+				"Name": "EnumValues",
+				"StateType": "Array",
+				"ChildType": "String"
+			}
+		]
+	}
+]

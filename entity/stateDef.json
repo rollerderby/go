@@ -1,0 +1,153 @@
+[{
+		"Name": "Teams",
+		"StateType": "Hash",
+		"ChildType": "Team",
+		"Root": "Teams",
+		"SavePath": "entities/teams"
+	},
+	{
+		"Name": "People",
+		"StateType": "Hash",
+		"ChildType": "Person",
+		"Root": "People",
+		"SavePath": "entities/people"
+	},
+	{
+		"Name": "Leagues",
+		"StateType": "Hash",
+		"ChildType": "League",
+		"Root": "Leagues",
+		"SavePath": "entities/leagues"
+	},
+	{
+		"Name": "Team",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "ID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Name",
+				"StateType": "String"
+			},
+			{
+				"Name": "LeagueID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "TeamLevel",
+				"StateType": "Enum",
+				"EnumValues": ["Charter", "A", "B", "C", "D"]
+			},
+			{
+				"Name": "Jersey",
+				"StateType": "Hash",
+				"ChildType": "Jersey"
+			}
+		]
+	},
+	{
+		"Name": "Jersey",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "ID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Name",
+				"StateType": "String"
+			},
+			{
+				"Name": "Description",
+				"StateType": "String"
+			}
+		]
+	},
+	{
+		"Name": "Person",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "ID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Name",
+				"StateType": "String"
+			},
+			{
+				"Name": "Certs",
+				"StateType": "Hash",
+				"ChildType": "Cert"
+			},
+			{
+				"Name": "Leagues",
+				"StateType": "Array",
+				"ChildType": "PersonLeague"
+			},
+			{
+				"Name": "Teams",
+				"StateType": "Array",
+				"ChildType": "PersonTeam"
+			}
+		]
+	},
+	{
+		"Name": "League",
+		"StateType": "Object"
+	},
+	{
+		"Name": "PersonLeague",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "LeagueID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Numbers",
+				"StateType": "Array",
+				"ChildType": "String"
+			}
+		]
+	},
+	{
+		"Name": "PersonTeam",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "TeamID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Numbers",
+				"StateType": "Array",
+				"ChildType": "String"
+			}
+		]
+	},
+	{
+		"Name": "Cert",
+		"StateType": "Object",
+		"Fields": [{
+				"Name": "ID",
+				"StateType": "GUID"
+			},
+			{
+				"Name": "Organization",
+				"StateType": "Enum",
+				"EnumValues": ["WFTDA", "MRDA", "JRDA"]
+			},
+			{
+				"Name": "Type",
+				"StateType": "Enum",
+				"EnumValues": ["Ref 1", "Ref 2", "Ref 3", "Ref 4", "Ref 5", "NSO 1", "NSO 2", "NSO 3", "NSO 4", "NSO 5"]
+			},
+			{
+				"Name": "StartDate",
+				"StateType": "Date"
+			},
+			{
+				"Name": "EndDate",
+				"StateType": "Date"
+			}
+		]
+	}
+]
