@@ -35,11 +35,6 @@ else
 	cp js/jquery-3.2.1.slim.js html/jquery.js
 fi
 
-go get -u github.com/mjibson/esc || exit 1
-go get -u github.com/gorilla/websocket || exit 1
-go get -u github.com/satori/go.uuid || exit 1
-rm -rf `go env GOPATH`/pkg
-(go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | xargs -n 1 go get -u) || exit 1
 go install $BASE/cmd/buildStates || exit 1
 (go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep $BASE | xargs -n 1 go generate) || exit 1
 
