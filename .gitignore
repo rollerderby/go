@@ -7,3 +7,4 @@ state.go
 state_helpers.go
 cmd/server/html.go
 *.swp
+jquery.js
