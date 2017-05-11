@@ -22,7 +22,9 @@ func (m *Message) JSON() json.Value {
 	obj := make(json.Object)
 
 	obj["type"] = json.NewString(m.Type)
-	obj["data"] = m.Data
+	if m.Data != nil {
+		obj["data"] = m.Data
+	}
 
 	return obj
 }

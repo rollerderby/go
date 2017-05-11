@@ -3,8 +3,8 @@ package websocket
 import "github.com/rollerderby/go/logger"
 
 type User interface {
-	UserName() string
-	FullName() string
+	Username() string
+	Name() string
 }
 
 type Client interface {

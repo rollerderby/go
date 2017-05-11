@@ -106,7 +106,7 @@ func WebsocketInfos() []*WebsocketInfo {
 	for _, ws := range websockets {
 		username, fullname := "", ""
 		if user := ws.client.User(); user != nil {
-			username, fullname = user.UserName(), user.FullName()
+			username, fullname = user.Username(), user.Name()
 		}
 		ret = append(ret, &WebsocketInfo{
 			Path:       ws.path,
@@ -173,6 +173,9 @@ func (ws *Websocket) SendError(msg string, err error) error {
 }
 
 func (ws *Websocket) SendResponse(t string, data JSON) error {
+	if data == nil {
+		return ws.sendMessage(&Message{Type: t})
+	}
 	return ws.sendMessage(&Message{Type: t, Data: data.JSON()})
 }
 
