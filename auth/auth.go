@@ -61,11 +61,11 @@ func loadAuthFromCookies(r *http.Request, prefix string) *User {
 	}
 
 	if sig_bytes, err = base64.StdEncoding.DecodeString(auth_sig.Value); err != nil {
-		log.Errorf("Cannot decode %v cookie.  %v", authCookieName, err)
+		log.Debugf("Cannot decode %v cookie.  %v", authCookieName, err)
 		return nil
 	}
 	if err = verifySignature([]byte(auth.Value), sig_bytes); err != nil {
-		log.Errorf("Cannot verify signature.  %v", err)
+		log.Debugf("Cannot verify signature.  %v", err)
 		return nil
 	}
 

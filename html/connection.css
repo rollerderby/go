@@ -1,69 +1,459 @@
 /* The Modal (background) */
+
 .modal {
-    display: block; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	display: block;
+	/* Hidden by default */
+	position: fixed;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
+	padding-top: 100px;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
 }
+
 
 /* Modal Content */
+
 .modal-content {
-    position: relative;
-    background-color: #fefefe;
-    margin: auto;
-    padding: 0;
-    border: 1px solid #888;
-    width: 80%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s
+	position: relative;
+	background-color: #fefefe;
+	margin: auto;
+	padding: 0;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
 }
 
+
 /* Add Animation */
+
 @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0} 
-    to {top:0; opacity:1}
+	from {
+		top: -300px;
+		opacity: 0
+	}
+	to {
+		top: 0;
+		opacity: 1
+	}
 }
 
 @keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
+	from {
+		top: -300px;
+		opacity: 0
+	}
+	to {
+		top: 0;
+		opacity: 1
+	}
 }
 
+
 /* The Close Button */
+
 .close {
-    color: white;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .modal-header {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
 }
 
-.modal-body {padding: 2px 16px;}
+.modal-body {
+	padding: 2px 16px;
+}
 
 .modal-footer {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
+}
+
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	position: relative;
+}
+
+body {
+	overflow-x: hidden;
+	-webkit-animation: androidbugfix infinite 1s
+}
+
+@-webkit-keyframes androidbugfix {
+	from {
+		padding: 0
+	}
+	to {
+		padding: 0
+	}
+}
+
+.page-header {
+	position: relative;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4.0625em;
+	background: #222
+}
+
+.page-header label {
+	padding: 0 0.125em;
+	font: 2.875em/1.4375em Arial
+}
+
+#topMenu label {
+	padding: 0 0.25em;
+	font: 3.125em/1.375em Arial
+}
+
+#topMenu .sub-nav .toggle {
+	padding: 0 0.3125em;
+	font: 2em/2em Arial;
+	top: 0;
+	-webkit-transform: scale(-1, 1);
+	-ms-transform: scale(-1, 1);
+	transform: scale(-1, 1)
+}
+
+.page-header label:hover,
+#topMenu label:hover {
+	color: #ccc
+}
+
+#main-nav-check,
+#topMenu .sub-nav-check {
+	position: absolute;
+	top: -9999px;
+	left: -9999px
+}
+
+.toggle {
+	position: absolute;
+	right: 0.15em;
+	cursor: pointer;
+	color: #fff
+}
+
+.container {
+	background: transparent;
+	min-height: 100%;
+	padding: 0;
+	margin: 0
+}
+
+#topMenu,
+#topMenu .sub-nav {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 16.75em;
+	background: #222;
+	z-index: 9999;
+	left: -16.75em
+}
+
+.container,
+#topMenu,
+#topMenu .sub-nav {
+	-webkit-transform: translate(0, 0);
+	-ms-transform: translate(0, 0);
+	transform: translate(0, 0);
+	-webkit-transition: -webkit-transform .25s ease;
+	transition: transform .25s ease;
+}
+
+#topMenu ul {
+	background: #222;
+	line-height: 1.75em;
+	text-decoration: none;
+	padding: 0;
+	list-style: none;
+	margin-top: 4.0625em;
+	border-top: 1px solid #444
+}
+
+#topMenu li {
+	border-bottom: 1px solid #444
+}
+
+#topMenu li .menuEntry {
+	background: #222;
+	display: block;
+	font-size: 0.875em;
+	padding-left: 1.5em;
+	color: #fff;
+	text-decoration: none
+}
+
+#topMenu li .menuEntry:hover,
+#topMenu .toggle-sub:hover {
+	background: #333
+}
+
+#topMenu .sub-nav {
+	margin-top: -1px
+}
+
+#topMenu .sub-heading {
+	margin-top: 4.0625em;
+	padding-left: 1.3125em;
+	color: #999
+}
+
+#topMenu .sub-heading:before {
+	content: "";
+	display: block;
+	height: 1px;
+	width: 16.75em;
+	margin-left: -1.3125em;
+	background: #444
+}
+
+#topMenu .toggle-sub {
+	font: bold 1em/1.75em Arial;
+	color: #fff;
+	background: #222;
+	float: right;
+	margin-top: -1.75em;
+	width: 2.25em;
+	border-left: 1px solid #444;
+	cursor: pointer;
+	text-align: center
+}
+
+.container,
+#topMenu,
+#topMenu .sub-nav,
+.close-all {
+	-webkit-transform: translate3d(0, 0, 0)
+}
+
+#topMenu .close-all {
+	display: none
+}
+
+.js #topMenu .close-all {
+	display: inline
+}
+
+.js #topMenu .toggle {
+	top: 0;
+	z-index: 9999
+}
+
+.js #topMenu .sub-nav .toggle {
+	left: 0.15em;
+	width: 1em
+}
+
+#main-nav-check:checked~.container,
+#main-nav-check:checked~#topMenu,
+#topMenu .sub-nav-check:checked~[id$="-sub"] {
+	-webkit-transform: translate(16.75em, 0);
+	-ms-transform: translate(16.75em, 0);
+	transform: translate(16.75em, 0)
+}
+
+.container {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.page-header {
+	display: block;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	height: 65px;
+}
+
+.page-content {
+	display: block;
+	width: 100%;
+	position: absolute;
+	top: 70px;
+	bottom: 0px;
+	overflow-y: auto
+}
+
+
+@media(min-width:60em) {
+	/* #### - extra css for js enhancement - #### */
+	.js #topMenu .close-all {
+		display: none
+	}
+	.container,
+	#topMenu,
+	#topMenu .sub-nav {
+		-webkit-transform: translate(0, 0) !important;
+		-ms-transform: translate(0, 0) !important;
+		transform: translate(0, 0) !important
+	}
+	#topMenu label,
+	#topMenu .sub-nav,
+	#topMenu .sub-heading,
+	.page-header label {
+		display: none
+	}
+	#topMenu {
+		left: auto;
+		bottom: auto;
+		height: 0;
+		width: 100%
+	}
+	#topMenu .toggle-sub {
+		display: inline-block;
+		margin-top: -2.05em;
+		margin-right: 0.25em;
+		border-left: 0;
+		-webkit-transform: rotate(90deg);
+		-ms-transform: rotate(90deg);
+		transform: rotate(90deg)
+	}
+	#topMenu .toggle-sub,
+	#topMenu .toggle-sub:hover {
+		background: transparent
+	}
+	#topMenu ul ul .toggle-sub {
+		margin-top: -2.75em;
+		margin-right: 0;
+		border-left: 1px solid #444;
+		-webkit-transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		transform: rotate(0deg)
+	}
+	#topMenu ul li:hover>label {
+		color: #ccc
+	}
+	#topMenu>ul {
+		float: right;
+		position: relative;
+		z-index: 1;
+		top: 0.4285em;
+		right: 1em;
+		margin-top: 0;
+		display: inline-table;
+		border-left: 1px solid #444;
+		border-right: 0;
+		font-size: 0.875em
+	}
+	#topMenu ul:after {
+		content: "";
+		clear: both;
+		display: block
+	}
+	#topMenu ul li {
+		float: left;
+		position: relative;
+		text-align: left;
+		border-right: 1px solid #444
+	}
+	#topMenu ul li .menuEntry {
+		padding: 0.5em 3.75em 0.5em 1.5em
+	}
+	#topMenu ul li .menuEntry:only-child {
+		padding-right: 1.5em
+	}
+	#topMenu ul li:hover>.menuEntry {
+		background: #333;
+		-webkit-transition: background-color .25s ease;
+		transition: background-color .25s ease
+	}
+	#topMenu ul li:hover>ul {
+		display: block
+	}
+	#topMenu ul ul {
+		position: absolute;
+		left: 0;
+		margin-left: -1px
+	}
+	#topMenu ul ul li {
+		float: inherit;
+		width: 16.75em;
+		border-left: 1px solid #444
+	}
+	#topMenu ul ul li .menuEntry {
+		padding: 0 1.5em
+	}
+	#topMenu ul ul li .menuEntry:after {
+		right: 0.375em;
+		margin-top: -1.6875em;
+		-webkit-transform: none;
+		-ms-transform: none;
+		transform: none
+	}
+	#topMenu ul .sub-nav {
+		top: auto;
+		bottom: auto;
+		left: auto;
+		width: auto;
+		margin-top: 0;
+		-webkit-transform: none !important;
+		-ms-transform: none !important;
+		transform: none !important
+	}
+	#topMenu ul ul .sub-nav {
+		float: left;
+		top: 0;
+		left: 16.75em;
+		margin-left: 0;
+		margin-top: -1px
+	}
+	#topMenu ul .fly-left ul {
+		left: -16.75em;
+		margin-left: -2px
+	}
+	#topMenu ul .fly-left ul li {
+		float: none
+	}
+	#topMenu ul .fly-left .toggle-sub {
+		right: auto;
+		left: 0.5em;
+		left: 0.375em;
+		padding-bottom: 1px;
+		border-right: 1px solid #444;
+		-webkit-transform: rotate(-180deg);
+		-ms-transform: rotate(-180deg);
+		transform: rotate(-180deg)
+	}
+	#topMenu ul .go-up>ul {
+		top: auto;
+		bottom: 0;
+		margin-bottom: -1px
+	}
 }

@@ -16,5 +16,7 @@ func main() {
 		logger.SetLevel(logger.DEBUG)
 	}
 
-	server.Run(uint16(*port))
+	// server.Run returns true if a restart is requested
+	for server.Run(uint16(*port)) {
+	}
 }

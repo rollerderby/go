@@ -8,6 +8,8 @@ import (
 	"errors"
 	"hash"
 	"net/http"
+
+	"github.com/rollerderby/go/entity"
 )
 
 func (h *RootUsers) AddUser(username, password string, isSuper bool, groups []string, personID string) (*User, error) {
@@ -49,6 +51,14 @@ func (h *User) HasGroup(groups ...string) bool {
 	return false
 }
 
+func (u *User) Name() string {
+	per := entity.People.Get(u.PersonID())
+	if per == nil {
+		return ""
+	}
+	return per.Name()
+}
+
 func (u *User) setCookie(w http.ResponseWriter) error {
 	setCookiePair := func(t, auth, sig string) {
 		if auth != "" {
@@ -76,6 +86,11 @@ func (u *User) setCookie(w http.ResponseWriter) error {
 }
 
 func (h *User) CheckPassword(password string) bool {
+	if h.PasswordHash() == "" && h.PasswordHashType() == "" && password == "" {
+		// no password set, let them in.
+		return true
+	}
+
 	var hash hash.Hash
 
 	switch h.PasswordHashType() {

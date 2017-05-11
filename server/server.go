@@ -17,7 +17,10 @@ import (
 	"github.com/rollerderby/go/websocket"
 )
 
-var log = logger.New("server")
+var (
+	log     = logger.New("server")
+	restart *RestartSignal
+)
 
 // openBrowser tries to open the URL in a browser,
 // and returns whether it succeed in doing so.
@@ -45,35 +48,62 @@ func setVersion() {
 	state.Root.Add("Version", "", versionStr)
 }
 
-func Run(port uint16) {
+type RestartSignal struct {
+	ResetConfig bool
+	ResetHTML   bool
+}
+
+func (rs *RestartSignal) String() string {
+	return fmt.Sprintf("Restart { ResetConfig: %v  ResetHTML: %v }", rs.ResetConfig, rs.ResetHTML)
+}
+
+func (rs *RestartSignal) Signal() {
+}
+
+// Returns true if caller should restart
+func Run(port uint16) bool {
 	log.Info("Initializing")
+	restart = &RestartSignal{}
 
 	setVersion()
 
 	signals := make(chan os.Signal, 1)
-	var mux *auth.ServeMux
-	var err error
-	if mux, err = initializeWebserver(port, signals); err != nil {
-		return
+	if err := initializeWebserver(port, signals); err != nil {
+		log.Errorf("Unable to initialize webserver: %v", err)
+		return false
 	}
 
 	ruleset.Initialize()
 	entity.Initialize()
-	auth.Initialize(mux)
+	auth.Initialize()
 	websocket.Initialize()
 
 	state.Root.LoadSavedConfigs()
 
 	if err := auth.AddGlobalUsers(); err != nil {
 		log.Errorf("Unable to add global admin user: %v", err)
-		os.Exit(1)
+		return false
 	}
 
 	go state.Root.SaveLoop()
 
 	openBrowser(fmt.Sprintf("http://localhost:%v", port))
 
-	signal.Notify(signals, os.Interrupt, os.Kill)
+	signal.Notify(signals, os.Interrupt, os.Kill, restart)
 	s := <-signals
-	log.Noticef("Server received signal: %v.  Shutting down", s)
+
+	if s, ok := s.(*RestartSignal); ok {
+		log.Alertf("Restarting server: %+v", s)
+		if s.ResetConfig {
+			os.RemoveAll("config")
+		}
+		if s.ResetHTML {
+			os.RemoveAll("html")
+		}
+
+		return true
+	}
+
+	log.Alertf("Server received signal: %v.  Shutting down", s)
+	return false
 }

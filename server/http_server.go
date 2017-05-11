@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"time"
 
 	"github.com/rollerderby/go/auth"
 )
@@ -92,20 +93,32 @@ func extractHTMLFolder() error {
 	return nil
 }
 
-func initializeWebserver(port uint16, signals chan os.Signal) (*auth.ServeMux, error) {
+func initializeWebserver(port uint16, signals chan os.Signal) error {
 	if err := extractHTMLFolder(); err != nil {
-		log.Errorf("Cannot extract HTML folder: %v", err)
-		return nil, err
+		return fmt.Errorf("Cannot extract HTML folder: %v", err)
 	}
 
-	mux := auth.NewServeMux(http.FileServer(http.Dir("html")))
-	mux.Handle("", "/", mux.Files, nil)
-	mux.Handle("Admin System", "/admin/", mux.Files, []string{"admin"})
+	auth.NewServeMux()
+	auth.ServeMux.Handle("", "/", auth.ServeMux.Files, nil)
+	auth.ServeMux.Handle("Admin System", "/admin/", auth.ServeMux.Files, []string{"admin"})
+	auth.ServeMux.HandleFunc("", "/ws/control", controlHandler, nil)
+
+	c := make(chan error, 1)
+
 	go func() {
 		printStartup(port)
-		log.Crit(http.ListenAndServe(fmt.Sprintf(":%d", port), httpLog(mux)))
-		signals <- os.Kill
+		err := http.ListenAndServe(fmt.Sprintf(":%d", port), httpLog(auth.ServeMux))
+		if err != nil {
+			c <- err
+			signals <- os.Kill
+		}
 	}()
 
-	return mux, nil
+	// Give HTTP Server 1 second to boot up (or fail)
+	select {
+	case err := <-c:
+		return err
+	case <-time.After(time.Second):
+		return nil
+	}
 }

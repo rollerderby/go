@@ -1,11 +1,37 @@
 <html>
 
 <head>
-	<title>Scoreboard Main Index</title>
+	<title>CRG-GS Main Index</title>
+	<link href="/connection.css" rel="stylesheet" />
+	<script src="/jquery.js" type="text/javascript"></script>
+	<script src="/connection.js" type="text/javascript"></script>
 </head>
 
 <body>
-	Scoreboard Main Index
+	<input type="checkbox" name="nav" id="main-nav-check">
+	<div id="topMenu"><label for="main-nav-check" class="toggle" onclick="" title="Close">&times;</label>
+		<ul id="rootMenuNode">
+			<li><span class="menuEntry">Navigate</span><label for="link3" class="toggle-sub">►</label><input type="checkbox" name="nav" id="link3" class="sub-nav-check">
+				<ul id="link3-sub" class="sub-nav">
+					<li class="sub-heading">Navigate<label for="link3" class="toggle" title="Back">►</label></li>
+				</ul>
+			</li>
+			<li class="login-link"><a href="/auth" class="menuEntry">Login</a></li>
+			<li class="logout-link"><a href="/auth/logout/" class="menuEntry">Logout</a></li>
+			<li><a href="/" class="menuEntry">Home</a></li><label class="toggle close-all">&times;</label></ul>
+	</div>
+	<div class="container">
+		<div class="page-header">
+			<a href="/"><img src="/logo.png" alt="Home" title="Home" style="position: absolute; top: 0.5em; left: 1em; width: 3em; height: 3em; border: 0px;"></a>
+			<span class="page-welcome"></span>
+			<label for="main-nav-check" class="toggle" title="Menu">&#x2261;</label>
+		</div>
+		<div class="page-content">
+			<h2>CRG-GS Main Index</h2>
+			<ul class="menu-links">
+			</ul>
+		</div>
+	</div>
 </body>
 
 </html>
