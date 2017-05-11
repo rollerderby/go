@@ -50,9 +50,16 @@ func Run(port uint16) {
 
 	setVersion()
 
+	signals := make(chan os.Signal, 1)
+	var mux *auth.ServeMux
+	var err error
+	if mux, err = initializeWebserver(port, signals); err != nil {
+		return
+	}
+
 	ruleset.Initialize()
 	entity.Initialize()
-	auth.Initialize()
+	auth.Initialize(mux)
 	websocket.Initialize()
 
 	state.Root.LoadSavedConfigs()
@@ -62,10 +69,6 @@ func Run(port uint16) {
 		os.Exit(1)
 	}
 
-	signals := make(chan os.Signal, 1)
-	if err := initializeWebserver(port, signals); err != nil {
-		return
-	}
 	go state.Root.SaveLoop()
 
 	openBrowser(fmt.Sprintf("http://localhost:%v", port))

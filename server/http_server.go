@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+
+	"github.com/rollerderby/go/auth"
 )
 
 func printStartup(port uint16) {
@@ -90,19 +92,20 @@ func extractHTMLFolder() error {
 	return nil
 }
 
-func initializeWebserver(port uint16, signals chan os.Signal) error {
+func initializeWebserver(port uint16, signals chan os.Signal) (*auth.ServeMux, error) {
 	if err := extractHTMLFolder(); err != nil {
 		log.Errorf("Cannot extract HTML folder: %v", err)
-		return err
+		return nil, err
 	}
 
-	httpMux := http.NewServeMux()
-	httpMux.Handle("/", http.FileServer(http.Dir("html")))
+	mux := auth.NewServeMux()
+	mux.Handle("", "/", http.FileServer(http.Dir("html")), nil)
+	mux.Handle("", "/admin/", http.FileServer(http.Dir("html")), []string{"admin"})
 	go func() {
 		printStartup(port)
-		log.Crit(http.ListenAndServe(fmt.Sprintf(":%d", port), httpLog(httpMux)))
+		log.Crit(http.ListenAndServe(fmt.Sprintf(":%d", port), httpLog(mux)))
 		signals <- os.Kill
 	}()
 
-	return nil
+	return mux, nil
 }

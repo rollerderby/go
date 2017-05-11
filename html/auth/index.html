@@ -1,0 +1,34 @@
+<html>
+
+<head>
+	<title>CRG-GS Login</title>
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script>
+		$(init);
+
+		function init() {
+			$("#username").focus();
+		}
+	</script>
+</head>
+
+<body>
+	<h2>CRG-GS Login</h2>
+	<form method="post">
+		<table>
+			<tr>
+				<th>Username:</th>
+				<td><input id="username" type="text" name="username" /></td>
+			</tr>
+			<tr>
+				<th>Password:</th>
+				<td><input type="password" name="password" /></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" value="Login" /></td>
+			</tr>
+		</table>
+	</form>
+</body>
+
+</html>
