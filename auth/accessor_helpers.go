@@ -5,10 +5,12 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
+	"errors"
 	"hash"
+	"net/http"
 )
 
-func (h *UsersHelper) AddUser(username, password string, isSuper bool, groups []string, personID string) (*UserHelper, error) {
+func (h *RootUsers) AddUser(username, password string, isSuper bool, groups []string, personID string) (*User, error) {
 	user, err := h.New(username)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,7 @@ func (h *UsersHelper) AddUser(username, password string, isSuper bool, groups []
 	return user, nil
 }
 
-func (h *UserHelper) HasGroup(groups ...string) bool {
+func (h *User) HasGroup(groups ...string) bool {
 	if h.IsSuper() {
 		return true
 	}
@@ -47,7 +49,33 @@ func (h *UserHelper) HasGroup(groups ...string) bool {
 	return false
 }
 
-func (h *UserHelper) CheckPassword(password string) bool {
+func (u *User) setCookie(w http.ResponseWriter) error {
+	setCookiePair := func(t, auth, sig string) {
+		if auth != "" {
+			http.SetCookie(w, &http.Cookie{Path: "/", Name: t, Value: auth, MaxAge: 0})
+		} else {
+			http.SetCookie(w, &http.Cookie{Path: "/", Name: t, MaxAge: -1})
+		}
+		if sig != "" {
+			http.SetCookie(w, &http.Cookie{Path: "/", Name: t + "_sig", Value: sig, MaxAge: 0})
+		} else {
+			http.SetCookie(w, &http.Cookie{Path: "/", Name: t + "_sig", MaxAge: -1})
+		}
+	}
+
+	var sig_bytes []byte
+	var err error
+
+	if sig_bytes, err = sign([]byte(u.Username())); err != nil {
+		setCookiePair("auth", "", "")
+		return errors.New("Cannot generate auth signature")
+	}
+
+	setCookiePair("auth", u.Username(), base64.StdEncoding.EncodeToString(sig_bytes))
+	return nil
+}
+
+func (h *User) CheckPassword(password string) bool {
 	var hash hash.Hash
 
 	switch h.PasswordHashType() {
@@ -69,7 +97,7 @@ func (h *UserHelper) CheckPassword(password string) bool {
 	return passwordHash == h.PasswordHash()
 }
 
-func (h *UserHelper) SetPassword(password string) error {
+func (h *User) SetPassword(password string) error {
 	hash := sha512.New()
 	hash.Write([]byte(password))
 	passwordHash := base64.StdEncoding.EncodeToString(hash.Sum(nil))

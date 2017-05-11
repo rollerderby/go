@@ -1,6 +1,6 @@
 package ruleset
 
-func (rs *RulesetHelper) NewRule(Name, Type, DefaultValue string, EnumValues []string) (*RuleHelper, error) {
+func (rs *Ruleset) NewRule(Name, Type, DefaultValue string, EnumValues []string) (*Rule, error) {
 	r, err := rs.Rules().New(Name)
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (rs *RulesetHelper) NewRule(Name, Type, DefaultValue string, EnumValues []s
 	return r, nil
 }
 
-func (h *RulesetHelper) init() error {
+func (h *Ruleset) init() error {
 	h.NewRule("Clock.Intermission.Direction", "Enum", "Count Down", []string{"Count Up", "Count Down"})
 	h.NewRule("Clock.Intermission.MaximumNumber", "Integer", "2", nil)
 	h.NewRule("Clock.Intermission.MaximumTime", "Time", "60:00", nil)

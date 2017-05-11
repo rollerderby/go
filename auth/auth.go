@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"net/http"
 )
@@ -42,11 +41,11 @@ func sign(data []byte) ([]byte, error) {
 	}
 }
 
-func CheckAuth(r *http.Request) *UserHelper {
+func CheckAuth(r *http.Request) *User {
 	return loadAuthFromCookies(r, "auth")
 }
 
-func loadAuthFromCookies(r *http.Request, prefix string) *UserHelper {
+func loadAuthFromCookies(r *http.Request, prefix string) *User {
 	var auth, auth_sig *http.Cookie
 	var sig_bytes []byte
 	var err error
@@ -77,33 +76,7 @@ func loadAuthFromCookies(r *http.Request, prefix string) *UserHelper {
 	return nil
 }
 
-func (u *UserHelper) setCookie(w http.ResponseWriter) error {
-	setCookiePair := func(t, auth, sig string) {
-		if auth != "" {
-			http.SetCookie(w, &http.Cookie{Path: "/", Name: t, Value: auth, MaxAge: 0})
-		} else {
-			http.SetCookie(w, &http.Cookie{Path: "/", Name: t, MaxAge: -1})
-		}
-		if sig != "" {
-			http.SetCookie(w, &http.Cookie{Path: "/", Name: t + "_sig", Value: sig, MaxAge: 0})
-		} else {
-			http.SetCookie(w, &http.Cookie{Path: "/", Name: t + "_sig", MaxAge: -1})
-		}
-	}
-
-	var sig_bytes []byte
-	var err error
-
-	if sig_bytes, err = sign([]byte(u.Username())); err != nil {
-		setCookiePair("auth", "", "")
-		return errors.New("Cannot generate auth signature")
-	}
-
-	setCookiePair("auth", u.Username(), base64.StdEncoding.EncodeToString(sig_bytes))
-	return nil
-}
-
-func Authenticate(w http.ResponseWriter, r *http.Request, username, password string) (*UserHelper, error) {
+func Authenticate(w http.ResponseWriter, r *http.Request, username, password string) (*User, error) {
 	user := CheckAuth(r)
 	if user != nil {
 		return user, nil

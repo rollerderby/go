@@ -59,7 +59,7 @@ func AddGlobalUsers() error {
 	var err error
 
 	for _, u := range defaultUsers {
-		var person *entity.PersonHelper
+		var person *entity.Person
 
 		for _, per := range entity.People.FindByName(u.username) {
 			person = per

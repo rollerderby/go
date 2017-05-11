@@ -22,7 +22,7 @@ func HandlerFunc(f func(http.ResponseWriter, *http.Request), display, path strin
 	return Handler(http.HandlerFunc(f), display, path, g)
 }
 
-func (h *handler) IsAllowed(r *http.Request) (*UserHelper, bool) {
+func (h *handler) IsAllowed(r *http.Request) (*User, bool) {
 	if len(h.groups) == 0 {
 		return nil, true
 	}
@@ -30,7 +30,7 @@ func (h *handler) IsAllowed(r *http.Request) (*UserHelper, bool) {
 	return user, h.IsUserAllowed(user)
 }
 
-func (h *handler) IsUserAllowed(u *UserHelper) bool {
+func (h *handler) IsUserAllowed(u *User) bool {
 	if len(h.groups) == 0 {
 		return true
 	}
