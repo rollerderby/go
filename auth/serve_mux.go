@@ -7,11 +7,12 @@ import (
 
 type ServeMux struct {
 	mux      *http.ServeMux
+	Files    http.Handler
 	handlers []*handler
 }
 
-func NewServeMux() *ServeMux {
-	return &ServeMux{mux: http.NewServeMux()}
+func NewServeMux(files http.Handler) *ServeMux {
+	return &ServeMux{mux: http.NewServeMux(), Files: files}
 }
 
 func (sm *ServeMux) Handle(display, path string, handler http.Handler, requiredGroups []string) {

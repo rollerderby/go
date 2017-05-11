@@ -98,9 +98,9 @@ func initializeWebserver(port uint16, signals chan os.Signal) (*auth.ServeMux, e
 		return nil, err
 	}
 
-	mux := auth.NewServeMux()
-	mux.Handle("", "/", http.FileServer(http.Dir("html")), nil)
-	mux.Handle("", "/admin/", http.FileServer(http.Dir("html")), []string{"admin"})
+	mux := auth.NewServeMux(http.FileServer(http.Dir("html")))
+	mux.Handle("", "/", mux.Files, nil)
+	mux.Handle("Admin System", "/admin/", mux.Files, []string{"admin"})
 	go func() {
 		printStartup(port)
 		log.Crit(http.ListenAndServe(fmt.Sprintf(":%d", port), httpLog(mux)))
