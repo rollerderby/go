@@ -1,11 +1,10 @@
 build() {
 	echo "Building for $1-$2 to $3"
-	GOOS=$1 GOARCH=$2 go install -v std || exit 1
+	GOOS=$1 GOARCH=$2 go install $BUILD_FLAG std || exit 1
 
 	(go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | GOOS=$1 GOARCH=$2 xargs -n 1 go install) || exit 1
 
-	GOOS=$1 GOARCH=$2 go build -v -o $3 $SERVER || exit 1
-	echo
+	GOOS=$1 GOARCH=$2 go build $BUILD_FLAG -o $3 $SERVER || exit 1
 }
 
 ZIP=0
@@ -24,17 +23,18 @@ if [ $RELEASE -eq 0 ]; then VERSION=$VERSION-`date +%Y%m%d%H%M%S`; fi
 echo Building Version $VERSION
 echo
 
-cat > cmd/server/version.go <<END
-package main
+cat > server/version.go <<END
+package server
 
 const version = "$VERSION"
 END
 
 go get -u github.com/mjibson/esc || exit 1
+# go get github.com/gorilla/websocket || exit 1
+# go get github.com/satori/go.uuid || exit 1
 rm -rf `go env GOPATH`/pkg
 (go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep --invert-match $BASE | xargs -n 1 go get -u) || exit 1
 go install $BASE/cmd/buildStates || exit 1
-go generate $BASE/cmd/server || exit 1
 (go list -f '{{.Deps}}' $SERVER | tr "[" " " | tr "]" " " | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | grep $BASE | xargs -n 1 go generate) || exit 1
 
 if [ $ZIP -eq 0 ]; then
@@ -47,6 +47,8 @@ if [ $ZIP -eq 0 ]; then
 			;;
 	esac
 	rm -f ./bin/scoreboard$EXT
+
+	BUILD_FLAG=-v
 	build `go env GOOS` `go env GOARCH` "bin/scoreboard$EXT"
 else
 	rm -f scoreboard-*
@@ -57,6 +59,7 @@ else
 	cp -r html crg-scoreboard_$VERSION
 	cp AUTHORS LICENSE crg-scoreboard_$VERSION
 
+	BUILD_FLAG=
 	build "linux" "386" "crg-scoreboard_$VERSION/scoreboard-Linux-32"
 	build "linux" "amd64" "crg-scoreboard_$VERSION/scoreboard-Linux-64"
 	build "windows" "386" "crg-scoreboard_$VERSION/scoreboard-Windows-32.exe"
