@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sort"
 
+	"github.com/rollerderby/go/html_wrapper"
 	"github.com/rollerderby/go/json"
 )
 
@@ -16,7 +17,7 @@ type serveMux struct {
 func NewServeMux() *serveMux {
 	ServeMux = &serveMux{
 		mux:   http.NewServeMux(),
-		Files: http.FileServer(http.Dir("html")),
+		Files: http.FileServer(html_wrapper.New("html")),
 	}
 
 	return ServeMux
