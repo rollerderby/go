@@ -30,6 +30,7 @@ type root struct {
 	mu       sync.Mutex // Lock the state so only one "changer" can update the state at a time
 	isLocked bool       // Not foolproof, but helps to detect someone updating the state without holding the lock
 	changed  bool       // Was the state changed between locks?
+	isReady  bool       // Is the system up and ready to go?
 }
 
 func (r *root) Lock() {
@@ -52,6 +53,18 @@ func (r *root) Get(key string) Value {
 		return nil
 	}
 	return val.value
+}
+
+func (r *root) IsReady() bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.isReady
+}
+
+func (r *root) SetIsReady(isReady bool) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.isReady = isReady
 }
 
 func (r *root) changedValue(value Value) {
@@ -242,6 +255,7 @@ func (r *root) SaveLoop() {
 			}
 		}
 	}
+	r.SetIsReady(true)
 	for {
 		saveAllNeeded()
 		time.Sleep(1 * time.Second)

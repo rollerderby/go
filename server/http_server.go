@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/rollerderby/go/auth"
+	"github.com/rollerderby/go/state"
 )
 
 func printStartup(port uint16) {
@@ -59,6 +60,14 @@ func printStartup(port uint16) {
 
 func httpLog(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !state.Root.IsReady() {
+			time.Sleep(5 * time.Second)
+			if !state.Root.IsReady() {
+				// Something is wrong, reture error page
+				http.Error(w, "System not ready yet", http.StatusServiceUnavailable)
+				return
+			}
+		}
 		log.Debugf("%s: %s %s %s", r.Host, r.RemoteAddr, r.Method, r.URL)
 		w.Header().Set("cache-control", "private, max-age=0, no-cache")
 		handler.ServeHTTP(w, r)
@@ -101,6 +110,7 @@ func initializeWebserver(port uint16, signals chan os.Signal) error {
 	auth.NewServeMux()
 	auth.ServeMux.Handle("", "/", auth.ServeMux.Files, nil)
 	auth.ServeMux.Handle("Admin System", "/admin/", auth.ServeMux.Files, []string{"admin"})
+	auth.ServeMux.Handle("Views", "/views/", auth.ServeMux.Files, nil)
 	auth.ServeMux.HandleFunc("", "/ws/control", controlHandler, nil)
 
 	c := make(chan error, 1)
