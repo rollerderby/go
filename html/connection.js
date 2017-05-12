@@ -285,6 +285,22 @@ function newControlChannel() {
 
 		menuItems: function(msg) {
 			console.log("menuItems", msg);
+			if (msg.data != null) {
+				var nav = $("div#topMenu ul.navigation");
+				var index = $("ul.menu.index");
+				nav.find("li:not(.sub-heading)").detach();
+				index.empty();
+				for (var i = 0; i < msg.data.length; i++) {
+					var item = msg.data[i];
+					if (item.Priority == 1) {
+						$("div#topMenu li.auth.link").removeClass("Show");
+						$("div#topMenu li.auth.link." + item.Display).addClass("Show");
+					} else if (item.Priority > 1) {
+						nav.append($("<li>").append($("<a>").addClass("menuEntry").prop("href", item.Path).text(item.Display)));
+					}
+					index.append($("<li>").append($("<a>").prop("href", item.Path).text(item.Display)));
+				}
+			}
 		},
 
 		user: function(msg) {
